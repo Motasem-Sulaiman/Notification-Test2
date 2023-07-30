@@ -24,7 +24,7 @@ let sequelizeOptions =
         },
       }
     : {};
-    console.log("DATABASE_URL:", process.env.PORT);
+    console.log("DATABASE_URL:", process.env.DATABASE_URL);
  console.log(POSTGRESS_URI)
  console.log(sequelizeOptions)
 let sequelize = new Sequelize(POSTGRESS_URI, sequelizeOptions);
