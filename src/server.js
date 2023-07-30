@@ -22,6 +22,10 @@ const io = socket(port2);
 
 io.on("connection", (newSocket) => {
   console.log("connected to clients", newSocket.id);
+  newSocket.on('esraa',(esraa)=>{
+    console.log(esraa)
+
+  })
 })
 
 //--------------------------

@@ -4,16 +4,26 @@ const port2 = process.env.PORT2 || 3001;
 const io = require("socket.io-client");
 let host = `http://localhost:${port2}/`;
 const userConnection = io.connect(host);
+// const base64 = require('base-64');
+const { userModel } = require('../models/index');
+
+
 //_____________________
 const express = require('express');
 const dataModules = require('../models');
 const {users,posts,jobcomments,jobs,comments}=require('../models/index')
 //-------------
+// const esraa=(`this is a new notification from.....${users.id} `)
+// let fun =async (req, res, next) => {
 
-io.emit('heloo', ()=>{
-  
-});
+  // if (!req.headers.authorization) { return _authError(); }
 
+//   let basic = req.headers.authorization.split(' ').pop();
+//   let [user, pass] = base64.decode(basic).split(':');
+//   req.user = await userModel.authenticateBasic(user, pass)
+//   console.log(req.user)
+// }
+// fun()
 
 // io.on('new_comment',() => {
 //   console.log("New comment on post");
@@ -72,6 +82,7 @@ async function postComments(req, res) {
 async function handleGetAll(req, res) {
   let allRecords = await req.model.get();
   res.status(200).json(allRecords);
+  
 }
 
 async function handleGetOne(req, res) {
@@ -84,6 +95,7 @@ async function handleCreate(req, res) {
   let obj = req.body;
   let newRecord = await req.model.create(obj);
   res.status(201).json(newRecord);
+
 }
 
 async function handleUpdate(req, res) {
