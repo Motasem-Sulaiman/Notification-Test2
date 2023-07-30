@@ -1,37 +1,29 @@
-"use strict";
-// 3rd Party Resources
-require("dotenv").config();
-const port = process.env.PORT || 3001;
+require('dotenv').config();
 const port2 = process.env.PORT2 || 3001;
-
-//--------------------------
+const socket = require("socket.io");
+const io = socket(port2);
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
-const authRoutes = require("./auth/routes");
-const v2Routes = require("./routes/v2.js");
-const notFoundHandler = require("./error-handlers/404.js");
-const errorHandler = require("./error-handlers/500.js");
+const authRoutes = require("../src/auth/routes");
+const v2Routes = require("../src/routes/v2.js");
+const notFoundHandler = require("../src/error-handlers/404.js");
+const errorHandler = require("../src/error-handlers/500.js");
 // const logger = require("./middleware/logger.js");
-const v1Routes = require("./routes/v1.js");
+const v1Routes = require("../src/routes/v1.js");
 //_______---
-
-const socket = require("socket.io");
-const io = socket(port2);
 
 io.on("connection", (newSocket) => {
   console.log("connected to clients", newSocket.id);
-  newSocket.on('test',(test)=>{
-    console.log(test)
+//   newSocket.on('test',(test)=>{
+//     console.log(test)
 
-  })
+//   })
   newSocket.on("mota",(mota)=>{
     console.log(mota)
   })
 })
-
-//--------------------------
 app.use(express.json());
 // app.use(logger);
 app.use("/api/v1", v1Routes);

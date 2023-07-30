@@ -120,6 +120,15 @@ async function handleCreate(req, res) {
   let obj = req.body;
   let newRecord = await req.model.create(obj);
   res.status(201).json(newRecord);
+  const token = req.headers.authorization.split(" ").pop();
+
+  const parsedToken = jwt.verify(token, SECRET);
+  // const user1 = await users.get(req.body.user_id);
+
+  console.log(parsedToken.username);
+  // console.log("---------------------------------------->",user1['dataValues'].username)
+  const test=(`this is new notification from ${parsedToken.username}`)
+  userConnection.emit("test", test);
 }
 
 async function handleUpdate(req, res) {
@@ -133,15 +142,7 @@ async function handleUpdate(req, res) {
   // const username=await users.get({where:{user_id:obj.user_id}})
 
   // const esraa=(postUserId)
-  const token = req.headers.authorization.split(" ").pop();
-
-  const parsedToken = jwt.verify(token, SECRET);
-  // const user1 = await users.get(req.body.user_id);
-
-  console.log(parsedToken.username);
-  // console.log("---------------------------------------->",user1['dataValues'].username)
-  const esraa=(`this is new notification from ${parsedToken.username}`)
-  userConnection.emit("esraa", esraa);
+ 
 }
 
 async function handleDelete(req, res) {

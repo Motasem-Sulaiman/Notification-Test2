@@ -1,4 +1,5 @@
 "use strict";
+require("dotenv").config();
 const { Sequelize, DataTypes } = require("sequelize");
 const Collection = require("./data-collection.js");
 const postsModel = require("./posts/model.js");
@@ -23,7 +24,11 @@ let sequelizeOptions =
         },
       }
     : {};
+    console.log("DATABASE_URL:", process.env.PORT);
+ console.log(POSTGRESS_URI)
+ console.log(sequelizeOptions)
 let sequelize = new Sequelize(POSTGRESS_URI, sequelizeOptions);
+
 
 const posts = postsModel(sequelize, DataTypes);
 const jobcomments = jobComments(sequelize, DataTypes);

@@ -1,9 +1,9 @@
 "use strict";
 require("dotenv").config();
-const port2 = process.env.PORT2 || 3001;
-const io = require("socket.io-client");
-let host = `http://localhost:${port2}/`;
-const userConnection = io.connect(host);
+// const port2 = process.env.PORT2 || 3001;
+// const io = require("socket.io-client");
+// let host = `http://localhost:${port2}/`;
+// const userConnection = io.connect(host);
 // const base64 = require('base-64');
 const { userModel } = require('../models/index');
 
