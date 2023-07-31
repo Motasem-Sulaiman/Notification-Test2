@@ -1,10 +1,10 @@
 "use strict";
 require("dotenv").config();
 const SECRET = process.env.SECRET || 'secretstring';
-const port2 = process.env.PORT2 || 3001;
-const io = require("socket.io-client");
-let host = `http://localhost:${port2}/`;
-const userConnection = io.connect(host);
+const port = process.env.PORT || 3001;
+// const io = require("socket.io-client");
+// let host = `http://localhost:${port}/`;
+// const userConnection = io.connect(host);
 // const base64 = require('base-64');
 const jwt = require("jsonwebtoken");
 
@@ -22,10 +22,34 @@ const {
   jobcomments,
   jobs,
   comments,
+  notification,
+  notificationModel
+
 } = require("../models/index");
+const router = express.Router();
+
+router.get("/jobs/:id/jobcomments", bearerAuth, jobComments);
+router.get("/posts/:id/comments", bearerAuth, postComments);
+async function jobComments(req, res) {
+  const jobId = parseInt(req.params.id);
+  let jcomments = await jobs.getUserPosts(jobId, jobcomments.model);
+  res.status(200).json(jcomments);
+}
+async function postComments(req, res) {
+  const postId = parseInt(req.params.id);
+  let pcomments = await posts.getUserPosts(postId, comments.model);
+  res.status(200).json(pcomments);
+}
+router.get(
+  "/usersnotification",
+  bearerAuth,
+  permissions("read"),
+  userNotifications
+);
+
 // const checkId = require("../auth/middleware/checkId");
 
-const router = express.Router();
+
 
 // async function  get(req,res){
 //   const postId = await posts.get(req.params.id);
@@ -71,8 +95,29 @@ router.get(
   permissions("read"),
   postComments
 );
-router.get("/jobs/:id/jobcomments", bearerAuth, jobComments);
-router.get("/posts/:id/comments", bearerAuth, postComments);
+// router.get(
+//   "/users/notification",
+//   bearerAuth,
+//   permissions("read"),
+//   userNotifications
+// );
+async function userNotifications(req, res) {
+  // const recieverId = parseInt(req.params.id);
+  const token = req.headers.authorization.split(" ").pop();
+
+  const parsedToken = jwt.verify(token, SECRET);
+  console.log("----------------------------->",parsedToken)
+  let notifications = await notificationModel.findAll({
+    where: {
+      receiver_id: parsedToken.id,
+      
+  }
+  });
+
+  res.status(200).json(notifications);
+}
+// router.get("/jobs/:id/jobcomments", bearerAuth, jobComments);
+// router.get("/posts/:id/comments", bearerAuth, postComments);
 
 async function jobComments(req, res) {
   const jobId = parseInt(req.params.id);
@@ -84,6 +129,11 @@ async function postComments(req, res) {
   let pcomments = await posts.getUserPosts(postId, comments.model);
   res.status(200).json(pcomments);
 }
+// async function userNotifications(req, res) {
+//   const userId = parseInt(req.params.id);
+//   let userNotifications = await users.getUserPosts(userId, notification.model);
+//   res.status(200).json(userNotifications);
+// }
 
 router.get("/users/:id/:model", bearerAuth, permissions("read"), userRecords);
 
@@ -93,16 +143,16 @@ async function userRecords(req, res) {
   res.status(200).json(userRecord);
 }
 
-async function jobComments(req, res) {
-  const jobId = parseInt(req.params.id);
-  let jcomments = await jobs.getUserPosts(jobId, jobcomments.model);
-  res.status(200).json(jcomments);
-}
-async function postComments(req, res) {
-  const postId = parseInt(req.params.id);
-  let pcomments = await posts.getUserPosts(postId, comments.model);
-  res.status(200).json(pcomments);
-}
+// async function jobComments(req, res) {
+//   const jobId = parseInt(req.params.id);
+//   let jcomments = await jobs.getUserPosts(jobId, jobcomments.model);
+//   res.status(200).json(jcomments);
+// }
+// async function postComments(req, res) {
+//   const postId = parseInt(req.params.id);
+//   let pcomments = await posts.getUserPosts(postId, comments.model);
+//   res.status(200).json(pcomments);
+// }
 
 async function handleGetAll(req, res) {
   let allRecords = await req.model.get();
@@ -125,7 +175,7 @@ async function handleCreate(req, res) {
   const parsedToken = jwt.verify(token, SECRET);
   // const user1 = await users.get(req.body.user_id);
 
-  console.log(parsedToken.username);
+  // console.log(parsedToken.username);
   // console.log("---------------------------------------->",user1['dataValues'].username)
   const test=(`this is new notification from ${parsedToken.username}`)
   userConnection.emit("test", test);

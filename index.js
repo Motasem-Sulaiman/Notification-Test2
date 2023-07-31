@@ -1,6 +1,6 @@
 'use strict'
 require('dotenv').config();
-let port=process.env.PORT||3001;
+// let port=process.env.PORT;
 const server=require("./src/server")
 const {db}=require('./src/models/index')
 
@@ -10,5 +10,5 @@ db.sync(
 //   {force:true}
 )
 .then(()=>{
-    server.start(port)
+    server.start(process.env.PORT)
 })

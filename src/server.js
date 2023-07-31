@@ -1,10 +1,11 @@
 "use strict";
 // 3rd Party Resources
 require("dotenv").config();
-const port = process.env.PORT || 3001;
-const port2 = process.env.PORT2 || 3001;
+const port = process.env.PORT ;
+// const port2 = process.env.PORT2 || 3001;
 
 //--------------------------
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -15,21 +16,28 @@ const notFoundHandler = require("./error-handlers/404.js");
 const errorHandler = require("./error-handlers/500.js");
 // const logger = require("./middleware/logger.js");
 const v1Routes = require("./routes/v1.js");
+const http = require('http');
+const { Server } = require("socket.io");
+const server = http.createServer(app);
 //_______---
+const io = new Server(server, {
+  cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"]
+  }
+});
 
-const socket = require("socket.io");
-const io = socket(port2);
+// const socket = require("socket.io");
+// const io = socket(port);
 
 io.on("connection", (newSocket) => {
-  console.log("connected to clients", newSocket.id);
-  newSocket.on('test',(test)=>{
-    console.log(test)
-
-  })
-  newSocket.on("mota",(mota)=>{
-    console.log(mota)
-  })
-})
+  console.log("connected to clienttttttttttttttttttttttttttttttttttttttttt", newSocket.id);
+  newSocket.on('send_message', (data) => {
+    console.log("Received message from client:", data.message);
+    // If you want to send the message back to the client, you can emit a "receive_message" event:
+    io.emit("receive_message", { message: data.message });
+  });
+});
 
 //--------------------------
 app.use(express.json());
@@ -48,9 +56,9 @@ app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 
 module.exports = {
-  server: app,
+  // server: app,
   start: (port) => {
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`Server Up on ${port}`);
     });
   },
